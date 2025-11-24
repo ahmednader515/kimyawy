@@ -29,6 +29,7 @@ export async function GET() {
       orderBy: {
         createdAt: "desc",
       },
+      cacheStrategy: process.env.NODE_ENV === "production" ? { ttl: 120 } : undefined,
     });
 
     // Return courses with default progress of 0 for public view

@@ -3,7 +3,7 @@
 import * as z from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
-import { Eye, Pencil, EyeOff, LayoutDashboard } from "lucide-react";
+import { Eye, Pencil, EyeOff, LayoutDashboard, Files } from "lucide-react";
 import { useState, useEffect } from "react";
 import toast from "react-hot-toast";
 import { useRouter } from "next/navigation";
@@ -23,6 +23,15 @@ import { Input } from "@/components/ui/input";
 import { Editor } from "@/components/editor";
 import { Checkbox } from "@/components/ui/checkbox";
 import { IconBadge } from "@/components/icon-badge";
+import { AttachmentsForm } from "./attachments-form";
+
+interface ChapterAttachment {
+    id: string;
+    name: string;
+    url: string;
+    position: number;
+    createdAt: Date | string;
+}
 
 interface ChapterFormProps {
     initialData: {
@@ -30,6 +39,7 @@ interface ChapterFormProps {
         description: string | null;
         isFree: boolean;
         isPublished: boolean;
+        attachments: ChapterAttachment[];
     };
     courseId: string;
     chapterId: string;
@@ -178,31 +188,12 @@ export const ChapterForm = ({
     }
 
     return (
-        <div className="space-y-6">
-            <div className="flex items-center justify-between">
-                <div className="flex items-center gap-x-2">
-                    <IconBadge icon={LayoutDashboard} />
-                    <h2 className="text-xl">
-                        إعدادات الفصل
-                    </h2>
-                </div>
-                <Button
-                    onClick={onPublish}
-                    disabled={isLoading}
-                    variant={initialData.isPublished ? "outline" : "default"}
-                >
-                    {initialData.isPublished ? (
-                        <>
-                            <EyeOff className="h-4 w-4 mr-2" />
-                            إلغاء النشر
-                        </>
-                    ) : (
-                        <>
-                            <Eye className="h-4 w-4 mr-2" />
-                            نشر
-                        </>
-                    )}
-                </Button>
+        <div className="space-y-10">
+            <div className="flex items-center gap-x-2">
+                <IconBadge icon={LayoutDashboard} />
+                <h2 className="text-xl">
+                    إعدادات الفصل
+                </h2>
             </div>
             <div className="space-y-4">
                 <div className="border bg-card rounded-md p-4">
@@ -325,7 +316,7 @@ export const ChapterForm = ({
                 </div>
             </div>
 
-            <div>
+            <div className="space-y-4">
                 <div className="flex items-center gap-x-2">
                     <IconBadge icon={Eye} />
                     <h2 className="text-xl">
@@ -392,6 +383,53 @@ export const ChapterForm = ({
                             </Form>
                         )}
                     </div>
+                </div>
+            </div>
+
+            <div className="space-y-4">
+                <div className="flex items-center gap-x-2">
+                    <IconBadge icon={Files} />
+                    <h2 className="text-xl">
+                        مستندات الفصل
+                    </h2>
+                </div>
+                <AttachmentsForm
+                    initialData={{ attachments: initialData.attachments || [] }}
+                    courseId={courseId}
+                    chapterId={chapterId}
+                />
+            </div>
+
+            <div className="border bg-card rounded-md p-4">
+                <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+                    <div>
+                        <h3 className="text-lg font-semibold">
+                            {initialData.isPublished ? "الفصل منشور" : "الفصل غير منشور"}
+                        </h3>
+                        <p className="text-sm text-muted-foreground">
+                            {initialData.isPublished
+                                ? "يمكن للطلاب مشاهدة هذا الفصل الآن. يمكنك إلغاء النشر لإخفائه مؤقتًا."
+                                : "لن يكون هذا الفصل مرئيًا للطلاب حتى يتم نشره."}
+                        </p>
+                    </div>
+                    <Button
+                        onClick={onPublish}
+                        disabled={isLoading}
+                        variant={initialData.isPublished ? "outline" : "default"}
+                        className="w-full sm:w-auto px-8 py-6 text-base font-semibold"
+                    >
+                        {initialData.isPublished ? (
+                            <>
+                                <EyeOff className="h-4 w-4 mr-2" />
+                                إلغاء النشر
+                            </>
+                        ) : (
+                            <>
+                                <Eye className="h-4 w-4 mr-2" />
+                                نشر الفصل
+                            </>
+                        )}
+                    </Button>
                 </div>
             </div>
         </div>

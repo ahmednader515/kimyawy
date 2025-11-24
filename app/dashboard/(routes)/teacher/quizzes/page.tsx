@@ -8,7 +8,7 @@ import { Badge } from "@/components/ui/badge";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Search, Plus, Edit, Eye, Trash2 } from "lucide-react";
 import { toast } from "sonner";
-import { useRouter } from "next/navigation";
+import { useNavigationRouter } from "@/lib/hooks/use-navigation-router";
 
 interface Quiz {
     id: string;
@@ -36,7 +36,7 @@ interface Question {
 }
 
 const QuizzesPage = () => {
-    const router = useRouter();
+    const router = useNavigationRouter();
     const [quizzes, setQuizzes] = useState<Quiz[]>([]);
     const [loading, setLoading] = useState(true);
     const [searchTerm, setSearchTerm] = useState("");

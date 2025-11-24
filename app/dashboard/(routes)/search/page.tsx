@@ -54,6 +54,8 @@ export default async function SearchPage({
         orderBy: {
             createdAt: "desc",
         }
+    ,
+        cacheStrategy: process.env.NODE_ENV === "production" ? { ttl: 60 } : undefined,
     });
 
     const coursesWithProgress = await Promise.all(
@@ -189,6 +191,18 @@ export default async function SearchPage({
                                         {course.purchases.length > 0 ? "متابعة التعلم" : "عرض الكورس"}
                                     </Link>
                                 </Button>
+
+                                {course.purchases.length === 0 && (
+                                    <Button
+                                        className="w-full mt-3 border-brand text-brand hover:bg-brand/10 font-semibold py-3 text-base transition-all duration-200"
+                                        variant="outline"
+                                        asChild
+                                    >
+                                        <Link href={`/courses/${course.id}/purchase`}>
+                                            شراء الكورس
+                                        </Link>
+                                    </Button>
+                                )}
                             </div>
                         </div>
                     ))}

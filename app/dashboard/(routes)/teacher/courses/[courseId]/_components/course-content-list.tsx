@@ -2,7 +2,7 @@
 
 import { DragDropContext, Droppable, Draggable, DropResult } from "@hello-pangea/dnd";
 import { Chapter, Quiz } from "@prisma/client";
-import { Grip, Pencil } from "lucide-react";
+import { Grip } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Badge } from "@/components/ui/badge";
 import { Trash2 } from "lucide-react";
@@ -22,6 +22,13 @@ interface CourseContentListProps {
     onEdit: (id: string, type: "chapter" | "quiz") => void;
     onDelete: (id: string, type: "chapter" | "quiz") => void;
 }
+
+const getActionLabel = (type: "chapter" | "quiz", isPublished: boolean) => {
+    if (type === "chapter") {
+        return isPublished ? "تعديل فيديو" : "اضافة فيديو";
+    }
+    return isPublished ? "تعديل اختبار" : "اضافة اختبار";
+};
 
 export const CourseContentList = ({
     items,
@@ -98,9 +105,9 @@ export const CourseContentList = ({
                                             </Badge>
                                             <button
                                                 onClick={() => onEdit(item.id, item.type)}
-                                                className="hover:opacity-75 transition"
+                                                className="text-brand text-xs font-semibold hover:underline transition"
                                             >
-                                                <Pencil className="h-4 w-4" />
+                                                {getActionLabel(item.type, item.isPublished)}
                                             </button>
                                             <Trash2
                                                 onClick={() => onDelete(item.id, item.type)}

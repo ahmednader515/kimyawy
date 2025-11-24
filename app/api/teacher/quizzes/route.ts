@@ -63,7 +63,7 @@ export async function GET(req: Request) {
 
 export async function POST(req: Request) {
     try {
-        const { userId } = await auth();
+        const { userId, user } = await auth();
         const { title, description, courseId, questions, position, timer, maxAttempts } = await req.json();
 
         console.log("Received position:", position, "Type:", typeof position);
@@ -71,6 +71,8 @@ export async function POST(req: Request) {
         if (!userId) {
             return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
         }
+
+        const isAdmin = user?.role === "ADMIN";
 
         // Validate required fields
         if (!title || !title.trim()) {
@@ -81,16 +83,23 @@ export async function POST(req: Request) {
             return NextResponse.json({ error: "Course ID is required" }, { status: 400 });
         }
 
-        // Verify the course belongs to the teacher
+        // Verify the course exists and belongs to the teacher (unless admin)
         const course = await db.course.findUnique({
             where: {
                 id: courseId,
-                userId: userId
-            }
+            },
+            select: {
+                id: true,
+                userId: true,
+            },
         });
 
         if (!course) {
-            return NextResponse.json({ error: "Course not found or unauthorized" }, { status: 404 });
+            return NextResponse.json({ error: "Course not found" }, { status: 404 });
+        }
+
+        if (!isAdmin && course.userId !== userId) {
+            return NextResponse.json({ error: "Unauthorized" }, { status: 403 });
         }
 
         // Get the next position if not provided

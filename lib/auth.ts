@@ -1,12 +1,12 @@
 import { getServerSession } from "next-auth";
 import { redirect } from "next/navigation";
 import { AuthOptions } from "next-auth";
-import { PrismaAdapter } from "@auth/prisma-adapter";
 import { db } from "@/lib/db";
 import GoogleProvider from "next-auth/providers/google";
 import { Adapter } from "next-auth/adapters";
 import CredentialsProvider from "next-auth/providers/credentials";
 import bcrypt from "bcryptjs";
+import { prismaAdapter } from "@/lib/auth/prisma-adapter";
 
 export const auth = async () => {
   const session = await getServerSession(authOptions);
@@ -22,7 +22,7 @@ export const auth = async () => {
 };
 
 export const authOptions: AuthOptions = {
-  adapter: PrismaAdapter(db) as Adapter,
+  adapter: prismaAdapter(db) as Adapter,
   secret: process.env.NEXTAUTH_SECRET,
   providers: [
     GoogleProvider({

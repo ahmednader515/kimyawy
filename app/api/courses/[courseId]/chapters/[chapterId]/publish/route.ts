@@ -7,7 +7,7 @@ export async function PATCH(
     { params }: { params: Promise<{ courseId: string; chapterId: string }> }
 ) {
     try {
-        const { userId } = await auth();
+        const { userId, user } = await auth();
         const resolvedParams = await params;
 
         if (!userId) {
@@ -17,12 +17,19 @@ export async function PATCH(
         const courseOwner = await db.course.findUnique({
             where: {
                 id: resolvedParams.courseId,
-                userId,
-            }
+            },
+            select: {
+                id: true,
+                userId: true,
+            },
         });
 
         if (!courseOwner) {
-            return new NextResponse("Unauthorized", { status: 401 });
+            return new NextResponse("Course not found", { status: 404 });
+        }
+
+        if (courseOwner.userId !== userId && user?.role !== "ADMIN") {
+            return new NextResponse("Unauthorized", { status: 403 });
         }
 
         const chapter = await db.chapter.findUnique({

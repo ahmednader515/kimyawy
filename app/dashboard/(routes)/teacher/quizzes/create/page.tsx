@@ -10,7 +10,8 @@ import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 import { Plus, Trash2, GripVertical, X, Mic } from "lucide-react";
 import { toast } from "sonner";
-import { usePathname, useRouter } from "next/navigation";
+import { usePathname } from "next/navigation";
+import { useNavigationRouter } from "@/lib/hooks/use-navigation-router";
 import { DragDropContext, Droppable, Draggable } from "@hello-pangea/dnd";
 import { UploadDropzone } from "@/lib/uploadthing";
 
@@ -61,7 +62,7 @@ interface CourseItem {
 }
 
 const CreateQuizPage = () => {
-    const router = useRouter();
+    const router = useNavigationRouter();
     const pathname = usePathname();
     const dashboardPath = pathname.includes("/dashboard/admin/")
         ? "/dashboard/admin/quizzes"

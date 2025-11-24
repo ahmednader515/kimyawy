@@ -9,8 +9,10 @@ const NavigationLoadingContent = () => {
   const pathname = usePathname();
   const searchParams = useSearchParams();
   const { isNavigating, startNavigating, stopNavigating } = useNavigation();
-  const prevPathnameRef = useRef(pathname);
   const navigationTimeoutRef = useRef<NodeJS.Timeout | null>(null);
+  const stopTimeoutRef = useRef<NodeJS.Timeout | null>(null);
+  const safetyTimeoutRef = useRef<NodeJS.Timeout | null>(null);
+  const prevLocationRef = useRef<string>("");
   const isInitialMount = useRef(true);
 
   // Listen for link clicks and navigation events
@@ -125,48 +127,81 @@ const NavigationLoadingContent = () => {
     };
 
     document.addEventListener('click', handleClick, true);
-    window.addEventListener('popstate', () => {
+    const handlePopState = () => {
       if (navigationTimeoutRef.current) {
         clearTimeout(navigationTimeoutRef.current);
       }
       navigationTimeoutRef.current = setTimeout(() => {
         startNavigating();
       }, 50);
-    });
+    };
+
+    window.addEventListener('popstate', handlePopState);
 
     return () => {
       document.removeEventListener('click', handleClick, true);
       if (navigationTimeoutRef.current) {
         clearTimeout(navigationTimeoutRef.current);
       }
+      window.removeEventListener('popstate', handlePopState);
       history.pushState = originalPushState;
       history.replaceState = originalReplaceState;
     };
   }, [pathname, startNavigating]);
 
-  // Stop loading when pathname changes
+  const searchParamsString = searchParams?.toString() ?? "";
+  const currentLocation = `${pathname}?${searchParamsString}`;
+
+  // Stop loading when pathname or search params change
   useEffect(() => {
     // Skip on initial mount
     if (isInitialMount.current) {
       isInitialMount.current = false;
-      prevPathnameRef.current = pathname;
+      prevLocationRef.current = currentLocation;
       return;
     }
 
-    if (prevPathnameRef.current !== pathname) {
-      // If we're navigating and pathname changed, stop loading
-      if (isNavigating) {
-        // Small delay to ensure smooth transition
-        const timeout = setTimeout(() => {
-          stopNavigating();
-        }, 100);
-        prevPathnameRef.current = pathname;
-        return () => clearTimeout(timeout);
+    if (prevLocationRef.current !== currentLocation) {
+      prevLocationRef.current = currentLocation;
+
+      if (stopTimeoutRef.current) {
+        clearTimeout(stopTimeoutRef.current);
       }
-      // If pathname changed but we weren't navigating, update ref
-      prevPathnameRef.current = pathname;
+
+      // Stop shortly after any location change to avoid stale overlays
+      stopTimeoutRef.current = setTimeout(() => {
+        stopNavigating();
+      }, 100);
     }
-  }, [pathname, searchParams, isNavigating, stopNavigating]);
+
+    return () => {
+      if (stopTimeoutRef.current) {
+        clearTimeout(stopTimeoutRef.current);
+      }
+    };
+  }, [currentLocation, stopNavigating]);
+
+  // Safety timeout: ensure overlay never gets stuck indefinitely
+  useEffect(() => {
+    if (isNavigating) {
+      if (safetyTimeoutRef.current) {
+        clearTimeout(safetyTimeoutRef.current);
+      }
+      safetyTimeoutRef.current = setTimeout(() => {
+        stopNavigating();
+      }, 8000);
+      return () => {
+        if (safetyTimeoutRef.current) {
+          clearTimeout(safetyTimeoutRef.current);
+        }
+      };
+    }
+
+    if (safetyTimeoutRef.current) {
+      clearTimeout(safetyTimeoutRef.current);
+      safetyTimeoutRef.current = null;
+    }
+  }, [isNavigating, stopNavigating]);
 
   if (!isNavigating) return null;
 
