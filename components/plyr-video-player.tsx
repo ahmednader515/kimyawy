@@ -23,6 +23,16 @@ export const PlyrVideoPlayer = ({
   const html5VideoRef = useRef<HTMLVideoElement>(null);
   const youtubeEmbedRef = useRef<HTMLDivElement>(null);
   const playerRef = useRef<any>(null);
+  const disableYoutubeOverlay = () => {
+    if (videoType !== "YOUTUBE") return;
+    const iframe = playerRef.current?.elements?.container?.querySelector?.(
+      "iframe"
+    ) as HTMLIFrameElement | null;
+    if (iframe) {
+      iframe.style.pointerEvents = "none";
+      iframe.setAttribute("tabindex", "-1");
+    }
+  };
 
   // Initialize Plyr on mount/update and destroy on unmount
   useEffect(() => {
@@ -71,6 +81,8 @@ export const PlyrVideoPlayer = ({
       if (onEnded) player.on("ended", onEnded);
       if (onTimeUpdate)
         player.on("timeupdate", () => onTimeUpdate(player.currentTime || 0));
+      player.on("ready", disableYoutubeOverlay);
+      disableYoutubeOverlay();
     }
 
     setupPlayer();

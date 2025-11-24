@@ -112,18 +112,18 @@ export default function QuizResultPage({
     };
 
     const getGradeColor = (percentage: number) => {
-        if (percentage >= 90) return "text-green-600";
-        if (percentage >= 80) return "text-green-500";
-        if (percentage >= 70) return "text-green-400";
-        if (percentage >= 60) return "text-orange-600";
-        return "text-red-600";
+        if (percentage >= 90) return "text-primary";
+        if (percentage >= 80) return "text-primary/90";
+        if (percentage >= 70) return "text-primary/80";
+        if (percentage >= 60) return "text-amber-600";
+        return "text-destructive";
     };
 
     const getGradeBadge = (percentage: number) => {
-        if (percentage >= 90) return { variant: "default" as const, className: "bg-green-600 text-white" };
-        if (percentage >= 80) return { variant: "default" as const, className: "bg-green-500 text-white" };
-        if (percentage >= 70) return { variant: "default" as const, className: "bg-green-400 text-white" };
-        if (percentage >= 60) return { variant: "default" as const, className: "bg-orange-600 text-white" };
+        if (percentage >= 90) return { variant: "secondary" as const, className: "bg-primary text-primary-foreground" };
+        if (percentage >= 80) return { variant: "secondary" as const, className: "bg-primary/90 text-primary-foreground" };
+        if (percentage >= 70) return { variant: "secondary" as const, className: "bg-primary/80 text-primary-foreground" };
+        if (percentage >= 60) return { variant: "secondary" as const, className: "bg-amber-100 text-amber-800" };
         return { variant: "destructive" as const, className: "" };
     };
 
@@ -177,7 +177,7 @@ export default function QuizResultPage({
     if (loading) {
         return (
             <div className="min-h-screen flex items-center justify-center">
-                <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-[#27c08d]"></div>
+                <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
             </div>
         );
     }
@@ -216,7 +216,7 @@ export default function QuizResultPage({
                         <CardContent>
                             <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
                                 <div className="text-center">
-                                    <div className="text-2xl font-bold text-blue-600">
+                                    <div className="text-2xl font-bold text-primary">
                                         {result.score}/{result.totalPoints}
                                     </div>
                                     <div className="text-sm text-muted-foreground">الدرجة</div>
@@ -228,13 +228,13 @@ export default function QuizResultPage({
                                     <div className="text-sm text-muted-foreground">النسبة المئوية</div>
                                 </div>
                                 <div className="text-center">
-                                    <div className="text-2xl font-bold text-green-600">
+                                    <div className="text-2xl font-bold text-primary">
                                         {correctAnswers}
                                     </div>
                                     <div className="text-sm text-muted-foreground">إجابات صحيحة</div>
                                 </div>
                                 <div className="text-center">
-                                    <div className="text-2xl font-bold text-red-600">
+                                    <div className="text-2xl font-bold text-destructive">
                                         {incorrectAnswers}
                                     </div>
                                     <div className="text-sm text-muted-foreground">إجابات خاطئة</div>
@@ -266,11 +266,11 @@ export default function QuizResultPage({
                                             <h4 className="font-medium">السؤال {index + 1}</h4>
                                             <div className="flex items-center gap-2">
                                                 {answer.isCorrect ? (
-                                                    <CheckCircle className="h-4 w-4 text-green-600" />
+                                                    <CheckCircle className="h-4 w-4 text-primary" />
                                                 ) : (
-                                                    <XCircle className="h-4 w-4 text-red-600" />
+                                                    <XCircle className="h-4 w-4 text-destructive" />
                                                 )}
-                                                <Badge variant={answer.isCorrect ? "default" : "destructive"}>
+                                                <Badge variant={answer.isCorrect ? "secondary" : "destructive"}>
                                                     {answer.isCorrect ? "صحيح" : "خاطئ"}
                                                 </Badge>
                                             </div>
@@ -288,7 +288,7 @@ export default function QuizResultPage({
                                             </div>
                                             <div>
                                                 <span className="font-medium">الإجابة الصحيحة:</span>
-                                                <p className="text-green-600">
+                                                <p className="text-primary">
                                                     {formatAnswer(answer.correctAnswer, answer.question.type)}
                                                 </p>
                                             </div>
@@ -310,14 +310,14 @@ export default function QuizResultPage({
                         {canRetakeQuiz ? (
                             <Button
                                 onClick={handleTryAgain}
-                                className="bg-[#27c08d] hover:bg-[#27c08d]/90"
+                                className="bg-primary hover:bg-primary/90"
                             >
                                 إعادة الاختبار
                             </Button>
                         ) : (
                             <Button
                                 onClick={handleNextChapter}
-                                className="bg-[#27c08d] hover:bg-[#27c08d]/90"
+                                className="bg-primary hover:bg-primary/90"
                             >
                                 {willRedirectToDashboard ? "لوحة التحكم" : "الفصل التالي"}
                             </Button>

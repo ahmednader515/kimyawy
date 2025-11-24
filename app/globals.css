@@ -168,3 +168,9 @@ body,
 * {
   font-family: var(--font-playpen-sans-arabic), system-ui, sans-serif;
 }
+
+/* Prevent YouTube overlay buttons from being clickable inside Plyr */
+.plyr--youtube .plyr__video-wrapper iframe {
+  pointer-events: none;
+  user-select: none;
+}

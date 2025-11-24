@@ -190,7 +190,7 @@ export default function QuizPage({
     if (loading && !redirectToResult) {
         return (
             <div className="min-h-screen flex items-center justify-center">
-                <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-[#27c08d]"></div>
+                <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
             </div>
         );
     }
@@ -199,7 +199,7 @@ export default function QuizPage({
         return (
             <div className="min-h-screen flex items-center justify-center">
                 <div className="text-center">
-                    <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-[#27c08d] mx-auto mb-4"></div>
+                <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary mx-auto mb-4"></div>
                     <p className="text-muted-foreground">جاري تحميل النتيجة...</p>
                 </div>
             </div>
@@ -236,7 +236,7 @@ export default function QuizPage({
                         </Button>
                         <div className="flex items-center gap-4">
                             {quiz.timer && (
-                                <div className="flex items-center gap-2 text-amber-600">
+                                <div className="flex items-center gap-2 text-primary">
                                     <Clock className="h-4 w-4" />
                                     <span className="font-medium">{formatTime(timeLeft)}</span>
                                 </div>
@@ -259,9 +259,9 @@ export default function QuizPage({
                             <CardDescription>{quiz.description}</CardDescription>
                         </CardHeader>
                         <CardContent>
-                            <div className="w-full bg-gray-200 rounded-full h-2">
+                            <div className="w-full bg-muted rounded-full h-2">
                                 <div 
-                                    className="bg-[#27c08d] h-2 rounded-full transition-all duration-300"
+                                    className="bg-primary h-2 rounded-full transition-all duration-300"
                                     style={{ width: `${progress}%` }}
                                 ></div>
                             </div>
@@ -346,14 +346,14 @@ export default function QuizPage({
                                 <Button
                                     onClick={handleSubmit}
                                     disabled={submitting}
-                                    className="bg-[#27c08d] hover:bg-[#27c08d]/90"
+                                    className="bg-primary hover:bg-primary/90"
                                 >
                                     {submitting ? "جاري الإرسال..." : "إنهاء الاختبار"}
                                 </Button>
                             ) : (
                                 <Button
                                     onClick={() => setCurrentQuestion(currentQuestion + 1)}
-                                    className="bg-[#27c08d] hover:bg-[#27c08d]/90"
+                                    className="bg-primary hover:bg-primary/90"
                                 >
                                     التالي
                                 </Button>
@@ -362,13 +362,13 @@ export default function QuizPage({
                     </div>
 
                     {/* Warning */}
-                    <Card className="border-amber-200 bg-amber-50">
+                    <Card className="border-amber-200 bg-amber-50 dark:border-amber-800 dark:bg-amber-950/20">
                         <CardContent className="pt-6">
-                            <div className="flex items-center gap-2 text-amber-700">
+                            <div className="flex items-center gap-2 text-amber-700 dark:text-amber-300">
                                 <AlertCircle className="h-5 w-5" />
                                 <span className="font-medium">تنبيه</span>
                             </div>
-                            <p className="text-amber-700 mt-2">
+                            <p className="text-amber-700 dark:text-amber-200 mt-2">
                                 {quiz.maxAttempts > 1 
                                     ? `تأكد من إجابة جميع الأسئلة قبل إنهاء الاختبار. يمكنك إعادة الاختبار ${quiz.maxAttempts - (quiz.currentAttempt || 1)} مرات أخرى.`
                                     : "تأكد من إجابة جميع الأسئلة قبل إنهاء الاختبار. لا يمكنك العودة للاختبار بعد الإرسال."
