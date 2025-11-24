@@ -120,7 +120,7 @@ export default function HomePage() {
             <div className="relative w-64 h-64 md:w-80 md:h-80">
               <Image
                 src="/teacher-image.png"
-                alt="عبدالرحمن جلال"
+                alt="أستاذ / عبدالرحمن جلال"
                 fill
                 priority
                 className="object-cover rounded-full border-4 border-brand/20 shadow-lg"
