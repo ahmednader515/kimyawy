@@ -23,13 +23,16 @@ export default function BalancePage() {
   const [isLoading, setIsLoading] = useState(false);
   const [transactions, setTransactions] = useState<BalanceTransaction[]>([]);
   const [isLoadingTransactions, setIsLoadingTransactions] = useState(true);
-  const [copied, setCopied] = useState(false);
+  const [copiedVodafone, setCopiedVodafone] = useState(false);
+  const [copiedInstapay, setCopiedInstapay] = useState(false);
 
   // Check if user is a student (USER role)
   const isStudent = session?.user?.role === "USER";
   
   const vodafoneCashNumber = "01099302431";
-  const whatsappLink = `https://wa.me/201099302431`;
+  const instapayNumber = "01099302431";
+  const vodafoneCashWhatsappLink = `https://wa.me/201099302431`;
+  const instapayWhatsappLink = `https://wa.me/201099302431`;
 
   useEffect(() => {
     fetchBalance();
@@ -106,11 +109,11 @@ export default function BalancePage() {
     });
   };
 
-  const copyToClipboard = (text: string) => {
+  const copyToClipboard = (text: string, setCopiedState: (value: boolean) => void) => {
     navigator.clipboard.writeText(text);
-    setCopied(true);
+    setCopiedState(true);
     toast.success("تم نسخ الرقم");
-    setTimeout(() => setCopied(false), 2000);
+    setTimeout(() => setCopiedState(false), 2000);
   };
 
   return (
@@ -202,10 +205,10 @@ export default function BalancePage() {
                 <Button
                   variant="outline"
                   size="icon"
-                  onClick={() => copyToClipboard(vodafoneCashNumber)}
+                  onClick={() => copyToClipboard(vodafoneCashNumber, setCopiedVodafone)}
                   className="h-10 w-10"
                 >
-                  {copied ? (
+                  {copiedVodafone ? (
                     <Check className="h-4 w-4 text-brand" />
                   ) : (
                     <Copy className="h-4 w-4" />
@@ -230,7 +233,69 @@ export default function BalancePage() {
               size="lg"
             >
               <a
-                href={whatsappLink}
+                href={vodafoneCashWhatsappLink}
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                <MessageCircle className="h-5 w-5 ml-2" />
+                إرسال صورة الإيصال على واتساب
+              </a>
+            </Button>
+          </CardContent>
+        </Card>
+      )}
+
+      {/* Instapay Deposit Section - Only for students */}
+      {isStudent && (
+        <Card className="border-brand/20 bg-brand/5">
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2">
+              <MessageCircle className="h-5 w-5 text-brand" />
+              إضافة رصيد عبر إنستاباي
+            </CardTitle>
+            <CardDescription>
+              قم بتحويل المبلغ إلى رقم إنستاباي التالي ثم أرسل صورة الإيصال
+            </CardDescription>
+          </CardHeader>
+          <CardContent className="space-y-4">
+            <div className="bg-card rounded-lg p-4 border-2 border-brand/30">
+              <div className="flex items-center justify-between">
+                <div>
+                  <p className="text-sm text-muted-foreground mb-1">رقم إنستاباي</p>
+                  <p className="text-2xl font-bold text-brand">{instapayNumber}</p>
+                </div>
+                <Button
+                  variant="outline"
+                  size="icon"
+                  onClick={() => copyToClipboard(instapayNumber, setCopiedInstapay)}
+                  className="h-10 w-10"
+                >
+                  {copiedInstapay ? (
+                    <Check className="h-4 w-4 text-brand" />
+                  ) : (
+                    <Copy className="h-4 w-4" />
+                  )}
+                </Button>
+              </div>
+            </div>
+
+            <div className="bg-muted/50 rounded-lg p-4 space-y-2">
+              <p className="font-semibold text-sm">خطوات الإيداع:</p>
+              <ol className="list-decimal list-inside space-y-1 text-sm text-muted-foreground">
+                <li>قم بتحويل المبلغ المطلوب إلى رقم إنستاباي أعلاه</li>
+                <li>احفظ صورة إيصال التحويل من تطبيق إنستاباي</li>
+                <li>اضغط على زر "إرسال صورة الإيصال" أدناه</li>
+                <li>سيتم مراجعة طلبك وإضافة الرصيد إلى حسابك خلال 24 ساعة</li>
+              </ol>
+            </div>
+
+            <Button
+              asChild
+              className="w-full bg-brand hover:bg-brand/90 text-white"
+              size="lg"
+            >
+              <a
+                href={instapayWhatsappLink}
                 target="_blank"
                 rel="noopener noreferrer"
               >
