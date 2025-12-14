@@ -1,5 +1,22 @@
 This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
 
+## Environment Variables
+
+### reCaptcha v2 Configuration
+
+The sign-up page uses Google reCaptcha v2 for bot protection. You need to add the following environment variables:
+
+- `NEXT_PUBLIC_RECAPTCHA_SITE_KEY` - Your reCaptcha v2 site key (public, used on client-side)
+- `RECAPTCHA_SECRET_KEY` - Your reCaptcha v2 secret key (private, used on server-side)
+
+Add these to your `.env.local` file:
+```
+NEXT_PUBLIC_RECAPTCHA_SITE_KEY=your_site_key_here
+RECAPTCHA_SECRET_KEY=your_secret_key_here
+```
+
+You can get these keys from [Google reCaptcha Admin Console](https://www.google.com/recaptcha/admin).
+
 ## Getting Started
 
 First, run the development server:
